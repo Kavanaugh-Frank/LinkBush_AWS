@@ -20,7 +20,7 @@ LinkBush is a serverless application that allows users to create and manage pers
 | Service       | Purpose                                                  |
 |---------------|----------------------------------------------------------|
 | **Lambda**    | Hosts the Go backend using Function URLs                 |
-| **API Gateway (implicit via Lambda URL)** | Accepts public HTTPS requests             |
+| **API Gateway (implicit via Lambda URL)** | Accepts public HTTPS requests |
 | **DynamoDB**  | Stores user page data (user ID, links, profile info)     |
 | **S3**        | Stores and serves user profile pictures (public access)  |
 
@@ -51,6 +51,10 @@ LinkBush is a serverless application that allows users to create and manage pers
 - Deletes user page by ID
 - Requires body with necessary confirmation data
 
+### Edit Page
+`POST /edit_page/:user_id`
+
+- Edits the information of the UserID in DynamoDB
 ---
 
 ## 🖼 Profile Pictures

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Link Page Manager</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f0f2f5;
+    }
+
+    .nav {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .nav button {
+      padding: 12px 24px;
+      margin: 0 8px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background-color: #4a5568;
+      color: white;
+      transition: all 0.3s ease;
+    }
+
+    .nav button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .section {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      margin-bottom: 25px;
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    label {
+      display: block;
+      margin: 15px 0;
+      font-weight: 500;
+      color: #2d3748;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 2px solid #e2e8f0;
+      border-radius: 6px;
+      box-sizing: border-box;
+      transition: border-color 0.3s ease;
+    }
+
+    input:focus {
+      border-color: #4a5568;
+      outline: none;
+    }
+
+    .links {
+      margin: 20px 0;
+    }
+
+    .link {
+      margin: 15px 0;
+      padding: 15px;
+      background: #f7fafc;
+      border-radius: 8px;
+      border: 2px dashed #e2e8f0;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 10px 5px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    #create-btn { background-color: #48bb78; color: white; }
+    #edit-btn { background-color: #4299e1; color: white; }
+    #delete-btn { background-color: #f56565; color: white; }
+    #get-btn { background-color: #ecc94b; color: #2d3748; }
+
+    #output {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      margin-top: 25px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <h1 style="text-align: center; color: #2d3748;">Link Page Manager</h1>
+  
+  <div class="nav">
+    <button onclick="showSection('create')">Create</button>
+    <button onclick="showSection('edit')">Edit</button>
+    <button onclick="showSection('view')">View</button>
+    <button onclick="showSection('delete')">Delete</button>
+  </div>
+
+  <!-- Create Section -->
+  <div id="create-section" class="section active">
+    <h2>Create New Page</h2>
+    <label>Username (will be your UserID): 
+      <input id="create-username" required />
+    </label>
+    <label>Title: <input id="create-title" required /></label>
+    <label>Profile Image: <input id="create-profileImage" type="file" accept="image/*" /></label>
+    <label>Password: <input id="create-password" type="password" required /></label>
+    
+    <h3>Links</h3>
+    <div id="create-links" class="links">
+      <div class="link">
+        <label>Label: <input class="label" required /></label>
+        <label>URL: <input class="url" required /></label>
+      </div>
+    </div>
+    <button onclick="addLink('create')">Add Another Link</button>
+    <button id="create-btn" onclick="createPage()">Create Page</button>
+  </div>
+
+  <!-- Edit Section -->
+  <div id="edit-section" class="section">
+    <h2>Edit Existing Page</h2>
+    <label>Username (UserID): 
+      <input id="edit-username" required />
+    </label>
+    <label>Password: <input id="edit-password" type="password" required /></label>
+    <label>New Title: <input id="edit-title" /></label>
+    <label>New Profile Image: <input id="edit-profileImage" type="file" accept="image/*" /></label>
+    
+    <h3>Update Links</h3>
+    <div id="edit-links" class="links">
+      <div class="link">
+        <label>Label: <input class="label" /></label>
+        <label>URL: <input class="url" /></label>
+      </div>
+    </div>
+    <button onclick="addLink('edit')">Add Another Link</button>
+    <button id="edit-btn" onclick="editPage()">Update Page</button>
+  </div>
+
+  <!-- View Section -->
+  <div id="view-section" class="section">
+    <h2>View Page</h2>
+    <label>Username (UserID): 
+      <input id="view-username" required />
+    </label>
+    <button id="get-btn" onclick="getPage()">View Page</button>
+  </div>
+
+  <!-- Delete Section -->
+  <div id="delete-section" class="section">
+    <h2>Delete Page</h2>
+    <label>Username (UserID): 
+      <input id="delete-username" required />
+    </label>
+    <label>Password: <input id="delete-password" type="password" required /></label>
+    <button id="delete-btn" onclick="deletePage()">Delete Page</button>
+  </div>
+
+  <pre id="output"></pre>
+
+  <script>
+    function showSection(sectionId) {
+      document.querySelectorAll('.section').forEach(section => {
+        section.classList.remove('active');
+      });
+      document.getElementById(`${sectionId}-section`).classList.add('active');
+    }
+
+    function addLink(section) {
+      const linkDiv = document.createElement("div");
+      linkDiv.classList.add("link");
+      linkDiv.innerHTML = `
+        <label>Label: <input class="label" /></label>
+        <label>URL: <input class="url" /></label>
+      `;
+      document.getElementById(`${section}-links`).appendChild(linkDiv);
+    }
+
+    function collectLinks(section) {
+      const linkContainer = document.getElementById(`${section}-links`);
+      return Array.from(linkContainer.querySelectorAll('.link')).map(link => {
+        const label = link.querySelector('.label').value.trim();
+        const url = link.querySelector('.url').value.trim();
+        return label && url ? { Label: label, URL: url } : null;
+      }).filter(Boolean);
+    }
+
+    function displayOutput(data) {
+      const outputElement = document.getElementById("output");
+      outputElement.innerHTML = "";
+
+      if (data.error) {
+        outputElement.style.color = "red";
+        outputElement.textContent = `Error: ${data.error}`;
+      } else {
+        outputElement.style.color = "green";
+        outputElement.textContent = JSON.stringify(data, null, 2);
+      }
+    }
+
+    // Create Page Function
+    function createPage() {
+      const formData = new FormData();
+      formData.append("UserID", document.getElementById("create-username").value.trim());
+      formData.append("Title", document.getElementById("create-title").value.trim());
+      formData.append("Password", document.getElementById("create-password").value.trim());
+      formData.append("ProfileImage", document.getElementById("create-profileImage").files[0]);
+
+      const links = collectLinks('create');
+      formData.append("Links", JSON.stringify(links));
+
+      fetch("https://jn32t7fhlpjudo7474yjpe4yge0hmtaf.lambda-url.us-east-1.on.aws/new_page", {
+      method: "POST",
+      body: formData
+      })
+      .then(res => res.json())
+      .then(displayOutput)
+      .catch(err => displayOutput({ error: err.toString() }));
+    }
+
+    // Edit Page Function
+    function editPage() {
+      const formData = new FormData();
+      const userID =  document.getElementById("edit-username").value.trim();
+      console.log(userID)
+      formData.append("UserID", userID);
+      formData.append("Title", document.getElementById("edit-title").value.trim());
+      formData.append("Password", document.getElementById("edit-password").value.trim());
+      formData.append("ProfileImage", document.getElementById("edit-profileImage").files[0]);
+
+      const links = collectLinks('edit');
+      console.log(links)
+      formData.append("Links", JSON.stringify(links));
+
+      fetch(`https://jn32t7fhlpjudo7474yjpe4yge0hmtaf.lambda-url.us-east-1.on.aws/edit_page/${userID}`, {
+        method: "POST",
+        body: formData
+      })
+      .then(res => res.json())
+      .then(displayOutput)
+      .catch(err => displayOutput({ error: err.toString() }));
+    }
+
+    // Get Page Function
+    function getPage() {
+      const userID = document.getElementById("view-username").value.trim();
+      window.open(`https://jn32t7fhlpjudo7474yjpe4yge0hmtaf.lambda-url.us-east-1.on.aws/${userID}`, '_blank');
+    }
+
+    // Delete Page Function
+    function deletePage() {
+      const data = {
+        UserID: document.getElementById("delete-username").value.trim(),
+        Password: document.getElementById("delete-password").value.trim()
+      };
+
+      fetch(`https://jn32t7fhlpjudo7474yjpe4yge0hmtaf.lambda-url.us-east-1.on.aws/delete_page/${data.UserID}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ Password: data.Password })
+      })
+      .then(res => res.json())
+      .then(displayOutput)
+      .catch(err => displayOutput({ error: err.toString() }));
+    }
+  </script>
+</body>
+</html>
